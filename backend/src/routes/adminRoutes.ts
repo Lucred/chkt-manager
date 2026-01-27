@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/adminController';
 
-const router = Router();
+const adminRouter = Router();
 
-router.get('/checkouts', adminController.getAllCheckouts);
-router.get('/carts', adminController.getAllCarts);
+adminRouter.get('/checkouts', adminController.getAllCheckouts);
+adminRouter.get('/carts', adminController.getAllCarts);
 
-export default router;
+export default adminRouter;
