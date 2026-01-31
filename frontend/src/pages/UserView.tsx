@@ -55,9 +55,17 @@ const UserView = ({ userId, onLogout }: UserViewProps) => {
     try {
       await cartService.addToCart(userId, product.id);
       await loadCart();
-      // Optional: Add a toast notification here
     } catch (error) {
       console.error('Failed to add to cart', error);
+    }
+  };
+
+  const handleUpdateQuantity = async (productId: number, delta: number) => {
+    try {
+      await cartService.addToCart(userId, productId, delta);
+      await loadCart();
+    } catch (error) {
+      console.error('Failed to update quantity', error);
     }
   };
 
@@ -116,14 +124,20 @@ const UserView = ({ userId, onLogout }: UserViewProps) => {
                 </div>
             </div>
             <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-3 gap-6" : "space-y-4"}>
-            {products.map((p) => (
-                <ProductItem 
-                    key={p.id} 
-                    product={p} 
-                    onAddToCart={handleAddToCart} 
-                    viewMode={viewMode}
-                />
-            ))}
+            {products.map((p) => {
+                const cartItem = cart.find(item => item.product.id === p.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                return (
+                    <ProductItem 
+                        key={p.id} 
+                        product={p} 
+                        onAddToCart={handleAddToCart} 
+                        onUpdateQuantity={(product, delta) => handleUpdateQuantity(product.id, delta)}
+                        cartQuantity={quantity}
+                        viewMode={viewMode}
+                    />
+                );
+            })}
             </div>
         </div>
       )}

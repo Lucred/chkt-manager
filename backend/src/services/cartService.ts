@@ -45,11 +45,20 @@ export const addToCart = async (userId: number, productId: number, quantity: num
   });
 
   if (existingItem) {
+    const newQuantity = existingItem.quantity + quantity;
+    if (newQuantity <= 0) {
+      return await prisma.orderItem.delete({
+        where: { id: existingItem.id },
+      });
+    }
     return await prisma.orderItem.update({
       where: { id: existingItem.id },
-      data: { quantity: existingItem.quantity + quantity },
+      data: { quantity: newQuantity },
     });
   } else {
+    if (quantity <= 0) {
+      throw new Error("Cannot add item with quantity <= 0");
+    }
     return await prisma.orderItem.create({
       data: {
         orderId: cart.id,
